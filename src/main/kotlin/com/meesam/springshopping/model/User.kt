@@ -41,23 +41,10 @@ data class User(
     @Column(nullable = true, name = "last_login_at")
     val lastLoginAt: LocalDateTime? = null,
 
+    @Column(nullable = false, name = "role")
+    val role: String ,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
-    var address: UserAddress? = null,
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = [JoinColumn(name = "user_id")])
-    @Column(name = "role")
-    val roles: Set<String> = setOf("ROLE_USER") // Default role
-    ) : UserDetails {
-
-        override fun getAuthorities(): Collection<GrantedAuthority?>? =
-            roles.map { SimpleGrantedAuthority(it) }
-
-        override fun getPassword(): String = password
-        override fun getUsername(): String = username
-        override fun isAccountNonExpired(): Boolean = true
-        override fun isAccountNonLocked(): Boolean = true
-        override fun isCredentialsNonExpired(): Boolean = true
-        override fun isEnabled(): Boolean = true
-    }
+    var address: UserAddress? = null
+)
