@@ -19,7 +19,7 @@ class UserService(private val userRepository: UserRepository, private val encode
                 password = encoder.encode(password),
                 dob = dob,
                 lastLoginAt = LocalDateTime.now(),
-                role = "ADMIN",
+                role = "User",
             )
            val response = userRepository.save(user)
             response.let {
@@ -29,7 +29,7 @@ class UserService(private val userRepository: UserRepository, private val encode
                     email = response.email,
                     dob = response.dob,
                     lastLoginAt = response.lastLoginAt,
-                    role = "Admin"
+                    role = response.role
                 )
                 return userResponse
             }

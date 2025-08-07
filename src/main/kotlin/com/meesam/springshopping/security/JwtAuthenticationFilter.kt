@@ -18,8 +18,6 @@ class JwtAuthenticationFilter(
     private val userDetailsService: CustomUserDetailsService,
     private val tokenService: TokenService
 ): OncePerRequestFilter() {
-
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,

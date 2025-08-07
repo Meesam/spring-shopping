@@ -15,7 +15,7 @@ class TokenService(
 ) {
 
     private val secretKey = Keys.hmacShaKeyFor(
-        jwtProperties.key.toByteArray()
+        jwtProperties.secretKey.toByteArray()
     )
 
     fun generate(
