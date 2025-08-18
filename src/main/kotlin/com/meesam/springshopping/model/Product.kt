@@ -7,11 +7,11 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
+import java.util.Optional
 
 @Entity
 @Table(name = "products")
@@ -21,10 +21,10 @@ data class Product(
     val id: Long = 0,
 
     @Column(nullable = false, name = "title")
-    var title:String,
+    var title: String,
 
     @Column(nullable = true, name = "description")
-    var description:String,
+    var description: String,
 
     @Column(nullable = false, name = "price")
     var price: Double,
@@ -35,10 +35,9 @@ data class Product(
     @Column(nullable = false, name = "createdAt")
     val createdAt: LocalDateTime? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
-    var images: ProductImages? = null,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "products", cascade = [CascadeType.ALL])
+    val productImages: MutableSet<ProductImages> = mutableSetOf(),
 
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val users: MutableList<Category> = mutableListOf()
+    @ManyToOne(fetch = FetchType.LAZY)
+    val category: Category
 )

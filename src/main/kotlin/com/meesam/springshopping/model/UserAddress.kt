@@ -3,11 +3,14 @@ package com.meesam.springshopping.model
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "user_address")
@@ -34,6 +37,9 @@ data class UserAddress(
     @Column(nullable = true, name = "nearby")
     val nearby :String,
 
-    @OneToMany(mappedBy = "address", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val users: MutableList<User> = mutableListOf()
+    @Column(nullable = false, name = "createdAt")
+    val createdAt: LocalDateTime? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    val users: User
 )

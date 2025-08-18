@@ -1,6 +1,7 @@
 package com.meesam.springshopping.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.CascadeType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -29,7 +31,7 @@ data class User(
     val name :String,
 
     @Column(nullable = false, unique = true, name = "email")
-    val email: String ,
+    val email: String,
 
     @JsonIgnore
     @Column(nullable = false, name = "password")
@@ -42,13 +44,15 @@ data class User(
     val lastLoginAt: LocalDateTime? = null,
 
     @Column(nullable = false, name = "role")
-    val role: String ,
+    val role: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")
-    var address: UserAddress? = null,
+    @Column(nullable = false, name = "createdAt")
+    val createdAt: LocalDateTime? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
-    var cart: UserCart? = null
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "users", cascade = [CascadeType.ALL])
+    val address: MutableSet<UserAddress> = mutableSetOf(),
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "users", cascade = [CascadeType.ALL])
+    val cart: MutableSet<UserCart> = mutableSetOf(),
+
 )

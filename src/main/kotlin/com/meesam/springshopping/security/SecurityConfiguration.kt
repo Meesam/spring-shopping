@@ -28,8 +28,8 @@ class SecurityConfiguration(
             .authorizeHttpRequests {
                 it.requestMatchers("/api/health-check", "/api/auth/**" ,"/api/auth/refresh", "/error")
                     .permitAll()
-                    .requestMatchers("/api/user/**")
-                    .hasRole("Admin")
+                    .requestMatchers(HttpMethod.POST,"/api/user/**", "/api/product/**", "/api/category/**")
+                    .hasRole("ADMIN")
                     .anyRequest()
                     .fullyAuthenticated()
 
