@@ -21,7 +21,6 @@ class AuthenticationService(
 ) {
 
     fun authentication(authRequest: AuthenticationRequest): AuthenticationResponse {
-
         try {
             authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(
@@ -32,7 +31,7 @@ class AuthenticationService(
             val user = userDetailsService.loadUserByUsername(authRequest.email)
             val accessToken = tokenService.generate(
                 userDetails = user,
-                expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
+                expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
             )
             return AuthenticationResponse(
                 token = accessToken

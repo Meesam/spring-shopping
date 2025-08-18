@@ -46,5 +46,9 @@ data class User(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
-    var address: UserAddress? = null
+    var address: UserAddress? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    var cart: UserCart? = null
 )
