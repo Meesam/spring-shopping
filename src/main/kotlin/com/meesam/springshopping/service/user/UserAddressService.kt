@@ -2,6 +2,7 @@ package com.meesam.springshopping.service.user
 
 import com.meesam.springshopping.dto.UserAddressRequest
 import com.meesam.springshopping.dto.UserAddressResponse
+import com.meesam.springshopping.dto.UserAddressUpdateRequest
 import com.meesam.springshopping.model.UserAddress
 import com.meesam.springshopping.repository.user.UserAddressRepository
 import com.meesam.springshopping.repository.user.UserRepository
@@ -54,5 +55,34 @@ class UserAddressService(
                 nearBy = it.nearby
             )
         }
+    }
+
+    fun updateAddress(userAddressUpdateRequest: UserAddressUpdateRequest){
+        val user = userRepository.findByIdOrNull(userAddressUpdateRequest.userId)
+            ?: throw IllegalArgumentException("User not found")
+
+        val existAddress = userAddressRepository.findByIdOrNull(userAddressUpdateRequest.id)
+            ?: throw IllegalArgumentException("address not found")
+
+        with(userAddressUpdateRequest) {
+            userAddressRepository.save(
+                existAddress.copy(
+                    street = street,
+                    state = state,
+                    city = city,
+                    pin = pin,
+                    nearby = nearBy,
+                    id = id,
+                    users = user,
+                    addressName = address
+                )
+            )
+        }
+    }
+
+    fun deleteAddress(id: Long){
+        val existAddress = userAddressRepository.findByIdOrNull(id)
+            ?: throw IllegalArgumentException("address not found")
+        userAddressRepository.delete(existAddress)
     }
 }
