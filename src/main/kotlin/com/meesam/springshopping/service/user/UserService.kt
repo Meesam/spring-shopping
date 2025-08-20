@@ -20,6 +20,7 @@ class UserService(private val userRepository: UserRepository, private val encode
                 dob = dob,
                 lastLoginAt = LocalDateTime.now(),
                 role = "User",
+                createdAt = LocalDateTime.now()
             )
            val response = userRepository.save(user)
             response.let {

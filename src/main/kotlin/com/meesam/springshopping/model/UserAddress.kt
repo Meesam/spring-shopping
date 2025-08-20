@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
@@ -35,7 +36,7 @@ data class UserAddress(
     val pin :String,
 
     @Column(nullable = true, name = "nearby")
-    val nearby :String,
+    val nearby :String? = null,
 
     @Column(nullable = false, name = "createdAt")
     val createdAt: LocalDateTime? = null,
