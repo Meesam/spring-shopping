@@ -46,6 +46,9 @@ data class User(
     @Column(nullable = false, name = "role")
     val role: String,
 
+    @Column(nullable = true, name = "profile_pic_url")
+    val profilePicUrl: String? = null,
+
     @Column(nullable = false, name = "createdAt")
     val createdAt: LocalDateTime? = null,
 

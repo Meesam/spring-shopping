@@ -1,18 +1,33 @@
 package com.meesam.springshopping.service.user
 
+import com.google.firebase.internal.FirebaseService
+import com.meesam.springshopping.dto.UserFavoriteProductRequest
+import com.meesam.springshopping.dto.UserProfilePictureRequest
 import com.meesam.springshopping.dto.UserRequest
 import com.meesam.springshopping.dto.UserResponse
+import com.meesam.springshopping.dto.UserUpdateRequest
 import com.meesam.springshopping.model.User
+import com.meesam.springshopping.model.UserFavoriteProduct
+import com.meesam.springshopping.repository.product.ProductRepository
+import com.meesam.springshopping.repository.product.UserFavoriteProductRepository
 import com.meesam.springshopping.repository.user.UserRepository
+import com.meesam.springshopping.service.firebase.FirebaseStorageService
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
-class UserService(private val userRepository: UserRepository, private val encoder: PasswordEncoder) {
+class UserService(
+    private val userRepository: UserRepository,
+    private val encoder: PasswordEncoder,
+    private val userFavoriteProductRepository: UserFavoriteProductRepository,
+    private val productRepository: ProductRepository,
+    private val firebaseService: FirebaseStorageService
+) {
 
-    fun createUser(createUser: UserRequest): UserResponse{
-        with(createUser){
+    fun createUser(createUser: UserRequest): UserResponse {
+        with(createUser) {
             val user = User(
                 name = name,
                 email = email,
@@ -22,7 +37,7 @@ class UserService(private val userRepository: UserRepository, private val encode
                 role = "User",
                 createdAt = LocalDateTime.now()
             )
-           val response = userRepository.save(user)
+            val response = userRepository.save(user)
             response.let {
                 val userResponse = UserResponse(
                     id = response.id,
@@ -35,5 +50,49 @@ class UserService(private val userRepository: UserRepository, private val encode
                 return userResponse
             }
         }
+    }
+
+    fun updateUser(userUpdateRequest: UserUpdateRequest) {
+        val existUser = userRepository.findByIdOrNull(userUpdateRequest.id)
+            ?: throw IllegalArgumentException("user not found")
+        with(userUpdateRequest) {
+            userRepository.save(
+                existUser.copy(
+                    name = name,
+                    dob = dob,
+                    profilePicUrl = profilePicUrl
+                )
+            )
+        }
+    }
+
+    fun addUserFavoriteProduct(userFavoriteProductRequest: UserFavoriteProductRequest) {
+        val user = userRepository.findByIdOrNull(userFavoriteProductRequest.userId)
+            ?: throw IllegalArgumentException("User not found")
+        val product = productRepository.findByIdOrNull(userFavoriteProductRequest.productId)
+            ?: throw IllegalArgumentException("Product not found")
+
+        userFavoriteProductRepository.save(
+            UserFavoriteProduct(
+                userId = user.id,
+                productId = product.id,
+                createdAt = LocalDateTime.now()
+            )
+        )
+    }
+
+
+    fun addUserProfilePicture(userProfilePictureRequest: UserProfilePictureRequest){
+        val user = userRepository.findByIdOrNull(userProfilePictureRequest.userId)
+            ?: throw IllegalArgumentException("User not found")
+       val result = firebaseService.uploadFile(userProfilePictureRequest.profilePicUrl)
+        if(result.isNotEmpty()){
+            userRepository.save(
+                user.copy(
+                    profilePicUrl = result
+                )
+            )
+        }
+
     }
 }

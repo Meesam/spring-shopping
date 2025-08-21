@@ -11,10 +11,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import org.springframework.core.env.Environment
+import java.io.FileInputStream
+import java.io.IOException
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties::class)
- class Configuration {
+class Configuration(private val env: Environment) {
 
      @Bean
      fun userDetailsService(userRepository: UserRepository): UserDetailsService =
@@ -34,4 +40,23 @@ import org.springframework.security.crypto.password.PasswordEncoder
     @Bean
     fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager =
         config.authenticationManager
+
+    @Bean
+    fun firebaseApp(): FirebaseApp {
+        try {
+            val jsonPath = env.getProperty("FIREBASE_PROFILE_JSON_PATH")
+            val bucketName = env.getProperty("FIREBASE_STORAGE_BUCKET_NAME")
+
+            val serviceAccount = FileInputStream(jsonPath.toString())
+
+            val options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setStorageBucket(bucketName.toString())
+                .build()
+
+            return FirebaseApp.initializeApp(options)
+        } catch (e: IOException) {
+            throw RuntimeException("Failed to initialize Firebase: " + e.message, e)
+        }
+    }
  }
