@@ -1,5 +1,6 @@
 package com.meesam.springshopping.controller
 
+import com.meesam.springshopping.dto.AddUserCartRequest
 import com.meesam.springshopping.dto.UserAddressRequest
 import com.meesam.springshopping.dto.UserAddressResponse
 import com.meesam.springshopping.dto.UserAddressUpdateRequest
@@ -7,6 +8,7 @@ import com.meesam.springshopping.dto.UserFavoriteProductRequest
 import com.meesam.springshopping.dto.UserProfilePictureRequest
 import com.meesam.springshopping.dto.UserUpdateRequest
 import com.meesam.springshopping.service.user.UserAddressService
+import com.meesam.springshopping.service.user.UserCartService
 import com.meesam.springshopping.service.user.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,7 +24,11 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/user")
-class UserController(private val userAddressService: UserAddressService, private val userService: UserService) {
+class UserController(
+    private val userAddressService: UserAddressService,
+    private val userService: UserService,
+    private val userCartService: UserCartService
+) {
 
 
     @PostMapping("/update-user")
@@ -60,6 +66,12 @@ class UserController(private val userAddressService: UserAddressService, private
         return ResponseEntity.ok(true)
     }
 
+    @PostMapping("/add-product-to-wishlist")
+    fun addUserProductToWishList(@RequestBody userFavoriteProductRequest: UserFavoriteProductRequest): ResponseEntity<Boolean> {
+        userService.addUserWishListProduct(userFavoriteProductRequest)
+        return ResponseEntity.ok(true)
+    }
+
     @PostMapping("/add-profile-picture")
     fun addUserProfilePicture(
         @RequestParam("file") file: MultipartFile,
@@ -70,6 +82,12 @@ class UserController(private val userAddressService: UserAddressService, private
             profilePicUrl = file
         )
         userService.addUserProfilePicture(request)
+        return ResponseEntity.ok(true)
+    }
+
+    @PostMapping("/add-to-cart")
+    fun addProductToCart(@RequestBody addUserCartRequest: AddUserCartRequest): ResponseEntity<Boolean> {
+        userCartService.addUserCart(addUserCartRequest)
         return ResponseEntity.ok(true)
     }
 }

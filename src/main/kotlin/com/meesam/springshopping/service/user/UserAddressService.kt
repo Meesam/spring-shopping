@@ -39,6 +39,7 @@ class UserAddressService(
         }
     }
 
+    @Transactional
     fun getUserWithAddress(id: Long): List<UserAddressResponse> {
         val result = userAddressRepository.getAllAddressByUserId(id)
         return result.map {
@@ -57,6 +58,7 @@ class UserAddressService(
         }
     }
 
+    @Transactional
     fun updateAddress(userAddressUpdateRequest: UserAddressUpdateRequest){
         val user = userRepository.findByIdOrNull(userAddressUpdateRequest.userId)
             ?: throw IllegalArgumentException("User not found")
@@ -80,6 +82,7 @@ class UserAddressService(
         }
     }
 
+    @Transactional
     fun deleteAddress(id: Long){
         val existAddress = userAddressRepository.findByIdOrNull(id)
             ?: throw IllegalArgumentException("address not found")

@@ -8,7 +8,9 @@ import com.meesam.springshopping.model.ProductImages
 import com.meesam.springshopping.repository.category.CategoryRepository
 import com.meesam.springshopping.repository.product.ProductImageRepository
 import com.meesam.springshopping.repository.product.ProductRepository
+import com.meesam.springshopping.service.firebase.FirebaseStorageService
 import com.meesam.springshopping.service.user.CustomUserDetailsService
+import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -20,8 +22,10 @@ class ProductService(
     private val categoryRepository: CategoryRepository,
     private val productImageRepository: ProductImageRepository,
     private val userDetailsService: CustomUserDetailsService,
+    private val firebaseService: FirebaseStorageService
 ) {
 
+    @Transactional
     fun createProduct(productRequest: ProductRequest) {
         val category = categoryRepository.findByIdOrNull(productRequest.category)
         category?.let {
@@ -37,6 +41,7 @@ class ProductService(
         }
     }
 
+    @Transactional
     fun getAllProduct(): List<ProductResponse> {
         val products = productRepository.findAll().map { product ->
             ProductResponse(
@@ -53,14 +58,19 @@ class ProductService(
         return products
     }
 
-    fun addProductImage(productImageRequest: ProductImageRequest){
+    @Transactional
+    fun addProductImage(productImageRequest: ProductImageRequest) {
         val product = productRepository.findByIdOrNull(productImageRequest.productId)
-        product?.let {
-            productImageRepository.save(ProductImages(
-                imagePath = productImageRequest.imagePath,
-                products = product,
-                createdAt = LocalDateTime.now()
-            ))
+            ?: throw IllegalArgumentException("Product not found")
+        val result = firebaseService.uploadFile(productImageRequest.imagePath)
+        if (result.isNotEmpty()) {
+            productImageRepository.save(
+                ProductImages(
+                    products = product,
+                    imagePath = result,
+                    createdAt = LocalDateTime.now()
+                )
+            )
         }
     }
 }

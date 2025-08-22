@@ -8,10 +8,13 @@ import com.meesam.springshopping.dto.UserResponse
 import com.meesam.springshopping.dto.UserUpdateRequest
 import com.meesam.springshopping.model.User
 import com.meesam.springshopping.model.UserFavoriteProduct
+import com.meesam.springshopping.model.UserWishList
 import com.meesam.springshopping.repository.product.ProductRepository
 import com.meesam.springshopping.repository.product.UserFavoriteProductRepository
+import com.meesam.springshopping.repository.product.UserWishlistRepository
 import com.meesam.springshopping.repository.user.UserRepository
 import com.meesam.springshopping.service.firebase.FirebaseStorageService
+import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -23,9 +26,11 @@ class UserService(
     private val encoder: PasswordEncoder,
     private val userFavoriteProductRepository: UserFavoriteProductRepository,
     private val productRepository: ProductRepository,
-    private val firebaseService: FirebaseStorageService
+    private val firebaseService: FirebaseStorageService,
+    private val userWishlistRepository: UserWishlistRepository
 ) {
 
+    @Transactional
     fun createUser(createUser: UserRequest): UserResponse {
         with(createUser) {
             val user = User(
@@ -52,6 +57,7 @@ class UserService(
         }
     }
 
+    @Transactional
     fun updateUser(userUpdateRequest: UserUpdateRequest) {
         val existUser = userRepository.findByIdOrNull(userUpdateRequest.id)
             ?: throw IllegalArgumentException("user not found")
@@ -81,11 +87,28 @@ class UserService(
         )
     }
 
+    @Transactional
+    fun addUserWishListProduct(userFavoriteProductRequest: UserFavoriteProductRequest) {
+        val user = userRepository.findByIdOrNull(userFavoriteProductRequest.userId)
+            ?: throw IllegalArgumentException("User not found")
+        val product = productRepository.findByIdOrNull(userFavoriteProductRequest.productId)
+            ?: throw IllegalArgumentException("Product not found")
 
+        userWishlistRepository.save(
+            UserWishList(
+                userId = user.id,
+                productId = product.id,
+                createdAt = LocalDateTime.now()
+            )
+        )
+    }
+
+
+    @Transactional
     fun addUserProfilePicture(userProfilePictureRequest: UserProfilePictureRequest){
         val user = userRepository.findByIdOrNull(userProfilePictureRequest.userId)
             ?: throw IllegalArgumentException("User not found")
-       val result = firebaseService.uploadFile(userProfilePictureRequest.profilePicUrl)
+        val result = firebaseService.uploadFile(userProfilePictureRequest.profilePicUrl)
         if(result.isNotEmpty()){
             userRepository.save(
                 user.copy(

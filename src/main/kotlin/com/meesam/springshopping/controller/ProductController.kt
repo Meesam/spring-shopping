@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 
 @RestController
 @RequestMapping("/api/product")
 class ProductController(private val productService: ProductService) {
-
 
     @PostMapping("/create")
     fun createProduct(@RequestBody productRequest: ProductRequest): ResponseEntity<Boolean> {
@@ -29,7 +30,12 @@ class ProductController(private val productService: ProductService) {
     }
 
     @PostMapping("/addImage")
-    fun addProductImages(@RequestBody productImageRequest: ProductImageRequest):ResponseEntity<Boolean>{
+    fun addProductImages(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("productId") productId: Long
+    ): ResponseEntity<Boolean> {
+
+        val productImageRequest = ProductImageRequest(file, productId)
         productService.addProductImage(productImageRequest)
         return ResponseEntity.ok(true)
     }
