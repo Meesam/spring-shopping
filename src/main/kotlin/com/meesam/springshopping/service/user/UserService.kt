@@ -6,6 +6,7 @@ import com.meesam.springshopping.dto.UserProfilePictureRequest
 import com.meesam.springshopping.dto.UserRequest
 import com.meesam.springshopping.dto.UserResponse
 import com.meesam.springshopping.dto.UserUpdateRequest
+import com.meesam.springshopping.exception_handler.NotFoundException
 import com.meesam.springshopping.model.User
 import com.meesam.springshopping.model.UserFavoriteProduct
 import com.meesam.springshopping.model.UserWishList
@@ -60,7 +61,7 @@ class UserService(
     @Transactional
     fun updateUser(userUpdateRequest: UserUpdateRequest) {
         val existUser = userRepository.findByIdOrNull(userUpdateRequest.id)
-            ?: throw IllegalArgumentException("user not found")
+            ?: throw NotFoundException("user not found")
         with(userUpdateRequest) {
             userRepository.save(
                 existUser.copy(
@@ -74,9 +75,9 @@ class UserService(
 
     fun addUserFavoriteProduct(userFavoriteProductRequest: UserFavoriteProductRequest) {
         val user = userRepository.findByIdOrNull(userFavoriteProductRequest.userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw NotFoundException("User not found")
         val product = productRepository.findByIdOrNull(userFavoriteProductRequest.productId)
-            ?: throw IllegalArgumentException("Product not found")
+            ?: throw NotFoundException("Product not found")
 
         userFavoriteProductRepository.save(
             UserFavoriteProduct(
@@ -90,9 +91,9 @@ class UserService(
     @Transactional
     fun addUserWishListProduct(userFavoriteProductRequest: UserFavoriteProductRequest) {
         val user = userRepository.findByIdOrNull(userFavoriteProductRequest.userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw NotFoundException("User not found")
         val product = productRepository.findByIdOrNull(userFavoriteProductRequest.productId)
-            ?: throw IllegalArgumentException("Product not found")
+            ?: throw NotFoundException("Product not found")
 
         userWishlistRepository.save(
             UserWishList(
@@ -107,7 +108,7 @@ class UserService(
     @Transactional
     fun addUserProfilePicture(userProfilePictureRequest: UserProfilePictureRequest){
         val user = userRepository.findByIdOrNull(userProfilePictureRequest.userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw NotFoundException("User not found")
         val result = firebaseService.uploadFile(userProfilePictureRequest.profilePicUrl)
         if(result.isNotEmpty()){
             userRepository.save(

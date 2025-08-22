@@ -10,6 +10,7 @@ import com.meesam.springshopping.dto.UserUpdateRequest
 import com.meesam.springshopping.service.user.UserAddressService
 import com.meesam.springshopping.service.user.UserCartService
 import com.meesam.springshopping.service.user.UserService
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,22 +30,28 @@ class UserController(
     private val userService: UserService,
     private val userCartService: UserCartService
 ) {
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserController::class.java)
+    }
 
 
     @PostMapping("/update-user")
     fun updateUser(@RequestBody userUpdateRequest: UserUpdateRequest): ResponseEntity<Boolean> {
+        logger.info("Received a request to the /api/user/update-user endpoint.")
         userService.updateUser(userUpdateRequest)
         return ResponseEntity.ok(true)
     }
 
     @PostMapping("/add-address")
     fun addNewAddress(@RequestBody userAddressRequest: UserAddressRequest): ResponseEntity<Boolean> {
+        logger.info("Received a request to the /api/user/add-address endpoint.")
         userAddressService.addNewAddress(userAddressRequest)
         return ResponseEntity.ok(true)
     }
 
     @GetMapping("/address")
     fun getAllUserAddress(@RequestParam("id") id: Long): ResponseEntity<List<UserAddressResponse>> {
+        logger.info("Received a request to the /api/address endpoint.")
         return ResponseEntity.ok(userAddressService.getUserWithAddress(id))
     }
 
