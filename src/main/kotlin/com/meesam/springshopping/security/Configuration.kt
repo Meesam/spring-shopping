@@ -17,6 +17,8 @@ import com.google.firebase.FirebaseOptions
 import org.springframework.core.env.Environment
 import java.io.FileInputStream
 import java.io.IOException
+import org.springframework.core.io.ClassPathResource
+import java.io.InputStream
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties::class)
@@ -44,10 +46,8 @@ class Configuration(private val env: Environment) {
     @Bean
     fun firebaseApp(): FirebaseApp {
         try {
-            val jsonPath = env.getProperty("FIREBASE_PROFILE_JSON_PATH")
             val bucketName = env.getProperty("FIREBASE_STORAGE_BUCKET_NAME")
-
-            val serviceAccount = FileInputStream(jsonPath.toString())
+            val serviceAccount: InputStream = ClassPathResource("spring-shopping-32af2-firebase-adminsdk-fbsvc-e2f4911b19.json").inputStream
 
             val options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
