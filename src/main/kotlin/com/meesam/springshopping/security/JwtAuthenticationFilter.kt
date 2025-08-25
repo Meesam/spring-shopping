@@ -1,5 +1,6 @@
 package com.meesam.springshopping.security
 
+import com.meesam.springshopping.exception_handler.DataAccessProblem
 import com.meesam.springshopping.service.user.CustomUserDetailsService
 import com.meesam.springshopping.service.user.TokenService
 import io.jsonwebtoken.ExpiredJwtException
@@ -57,15 +58,8 @@ class JwtAuthenticationFilter(
             // Covers malformed, signature invalid, unsupported, etc.
             unauthorized(response, "invalid_token", ex.message ?: "Invalid token", 401)
             return
-        } catch (ex: Exception) {
-            // Unexpected error while processing JWT
-            unauthorized(response, "invalid_token", "Token processing failed", 401)
-            return
         }
-
         filterChain.doFilter(request, response)
-
-
     }
 
     private fun updateContext(

@@ -33,6 +33,9 @@ class UserService(
 
     @Transactional
     fun createUser(createUser: UserRequest): UserResponse {
+        val user = userRepository.findByEmail(createUser.email)
+        user?.let { throw IllegalArgumentException("User already exists with this email: ${createUser.email}") }
+
         with(createUser) {
             val user = User(
                 name = name,
@@ -40,7 +43,7 @@ class UserService(
                 password = encoder.encode(password),
                 dob = dob,
                 lastLoginAt = LocalDateTime.now(),
-                role = "User",
+                role = role ?: "User",
                 createdAt = LocalDateTime.now()
             )
             val response = userRepository.save(user)

@@ -21,7 +21,8 @@ data class UserRequest(
     @field:NotBlank(message = "password cannot be blank")
     val password: String = "",
 
-    @field:NotBlank(message = "dob cannot be blank")
+    val role:String? = null,
+
     val dob: LocalDate,
     val lastLoginAt: LocalDateTime? = null
 )
