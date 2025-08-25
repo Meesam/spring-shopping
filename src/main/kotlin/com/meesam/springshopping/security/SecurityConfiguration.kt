@@ -30,6 +30,7 @@ class SecurityConfiguration(
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/product/**", "/api/category/**")
                     .hasRole("ADMIN")
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .anyRequest()
                     .fullyAuthenticated()
 

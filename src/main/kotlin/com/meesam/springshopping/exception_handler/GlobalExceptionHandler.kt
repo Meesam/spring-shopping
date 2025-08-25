@@ -2,6 +2,8 @@ package com.meesam.springshopping.exception_handler
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
@@ -48,6 +50,19 @@ class GlobalExceptionHandler {
         // Log the full stack trace for debugging purposes
         ex.printStackTrace()
         return ResponseEntity(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationExceptions(
+        ex: MethodArgumentNotValidException
+    ): ResponseEntity<Map<String, String?>> {
+        val errors = mutableMapOf<String, String?>()
+        ex.bindingResult.allErrors.forEach { error ->
+            val fieldName = (error as FieldError).field
+            val errorMessage = error.defaultMessage
+            errors[fieldName] = errorMessage
+        }
+        return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
     }
 }
 

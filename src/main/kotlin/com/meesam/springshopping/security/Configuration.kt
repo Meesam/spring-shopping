@@ -15,10 +15,12 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import org.springframework.core.env.Environment
-import java.io.FileInputStream
 import java.io.IOException
 import org.springframework.core.io.ClassPathResource
 import java.io.InputStream
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.info.License
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties::class)
@@ -58,5 +60,20 @@ class Configuration(private val env: Environment) {
         } catch (e: IOException) {
             throw RuntimeException("Failed to initialize Firebase: " + e.message, e)
         }
+    }
+
+    @Bean
+    fun customOpenAPI(): OpenAPI {
+        return OpenAPI()
+            .info(
+                Info().title("Spring Shopping API's Endpoints")
+                    .version("1.0")
+                    .description("API documentation for a Spring Shopping application built with Kotlin.")
+                    .termsOfService("http://swagger.io/terms/")
+                    .license(
+                        License().name("Apache 2.0")
+                            .url("http://springdoc.org")
+                    )
+            )
     }
  }

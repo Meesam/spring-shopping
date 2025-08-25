@@ -33,6 +33,7 @@ class UserAddressService(
                     pin = pin,
                     nearby = nearBy,
                     createdAt = LocalDateTime.now(),
+                    country = country,
                     users = user
                 )
             )
@@ -52,6 +53,7 @@ class UserAddressService(
                 userId = it.users.id,
                 userName = it.users.name,
                 createdAt = it.createdAt,
+                country = it.country,
                 street = it.street,
                 nearBy = it.nearby
             )
@@ -73,6 +75,7 @@ class UserAddressService(
                     state = state,
                     city = city,
                     pin = pin,
+                    country = country,
                     nearby = nearBy,
                     id = id,
                     users = user,

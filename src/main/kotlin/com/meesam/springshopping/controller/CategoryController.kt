@@ -3,6 +3,7 @@ package com.meesam.springshopping.controller
 import com.meesam.springshopping.dto.CategoryRequest
 import com.meesam.springshopping.dto.CategoryResponse
 import com.meesam.springshopping.service.category.CategoryService
+import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,7 +22,7 @@ class CategoryController(private val categoryService: CategoryService) {
         private val logger = LoggerFactory.getLogger(CategoryController::class.java)
     }
     @PostMapping("/create")
-    fun createCategory(@RequestBody categoryRequest: CategoryRequest): ResponseEntity<Boolean> {
+    fun createCategory(@Valid @RequestBody categoryRequest: CategoryRequest): ResponseEntity<Boolean> {
         logger.info("Received a request to the /api/category/create endpoint.")
         categoryService.createCategory(categoryRequest)
         return ResponseEntity.ok(true)

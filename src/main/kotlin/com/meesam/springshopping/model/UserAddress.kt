@@ -32,6 +32,9 @@ data class UserAddress(
     @Column(nullable = false, name = "city")
     val city :String,
 
+    @Column(nullable = true, name = "country")
+    val country :String? = null,
+
     @Column(nullable = true, name = "pin")
     val pin :String,
 

@@ -6,6 +6,7 @@ import com.meesam.springshopping.dto.UserRequest
 import com.meesam.springshopping.dto.UserResponse
 import com.meesam.springshopping.service.auth.AuthenticationService
 import com.meesam.springshopping.service.user.UserService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(private val userService: UserService, private val authenticationService: AuthenticationService) {
 
     @PostMapping("/register")
-    fun createUser(@RequestBody userRequest: UserRequest): ResponseEntity<UserResponse>{
+    fun createUser(@Valid @RequestBody userRequest: UserRequest): ResponseEntity<UserResponse>{
         val result = userService.createUser(userRequest)
         return ResponseEntity(result, HttpStatus.CREATED)
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody authenticationRequest: AuthenticationRequest): AuthenticationResponse{
+    fun login(@Valid @RequestBody authenticationRequest: AuthenticationRequest): AuthenticationResponse{
        return authenticationService.authentication(authenticationRequest)
     }
 }

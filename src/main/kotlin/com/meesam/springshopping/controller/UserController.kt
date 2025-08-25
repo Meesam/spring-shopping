@@ -10,6 +10,7 @@ import com.meesam.springshopping.dto.UserUpdateRequest
 import com.meesam.springshopping.service.user.UserAddressService
 import com.meesam.springshopping.service.user.UserCartService
 import com.meesam.springshopping.service.user.UserService
+import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -36,14 +37,14 @@ class UserController(
 
 
     @PostMapping("/update-user")
-    fun updateUser(@RequestBody userUpdateRequest: UserUpdateRequest): ResponseEntity<Boolean> {
+    fun updateUser(@Valid @RequestBody userUpdateRequest: UserUpdateRequest): ResponseEntity<Boolean> {
         logger.info("Received a request to the /api/user/update-user endpoint.")
         userService.updateUser(userUpdateRequest)
         return ResponseEntity.ok(true)
     }
 
     @PostMapping("/add-address")
-    fun addNewAddress(@RequestBody userAddressRequest: UserAddressRequest): ResponseEntity<Boolean> {
+    fun addNewAddress(@Valid @RequestBody userAddressRequest: UserAddressRequest): ResponseEntity<Boolean> {
         logger.info("Received a request to the /api/user/add-address endpoint.")
         userAddressService.addNewAddress(userAddressRequest)
         return ResponseEntity.ok(true)
@@ -56,7 +57,7 @@ class UserController(
     }
 
     @PostMapping("/update-address")
-    fun updateAddress(@RequestBody userAddressUpdateRequest: UserAddressUpdateRequest): ResponseEntity<Boolean> {
+    fun updateAddress(@Valid @RequestBody userAddressUpdateRequest: UserAddressUpdateRequest): ResponseEntity<Boolean> {
         userAddressService.updateAddress(userAddressUpdateRequest)
         return ResponseEntity.ok(true)
     }
@@ -68,13 +69,13 @@ class UserController(
     }
 
     @PostMapping("/add-favorite-product")
-    fun addUserFavoriteProduct(@RequestBody userFavoriteProductRequest: UserFavoriteProductRequest): ResponseEntity<Boolean> {
+    fun addUserFavoriteProduct(@Valid @RequestBody userFavoriteProductRequest: UserFavoriteProductRequest): ResponseEntity<Boolean> {
         userService.addUserFavoriteProduct(userFavoriteProductRequest)
         return ResponseEntity.ok(true)
     }
 
     @PostMapping("/add-product-to-wishlist")
-    fun addUserProductToWishList(@RequestBody userFavoriteProductRequest: UserFavoriteProductRequest): ResponseEntity<Boolean> {
+    fun addUserProductToWishList(@Valid @RequestBody userFavoriteProductRequest: UserFavoriteProductRequest): ResponseEntity<Boolean> {
         userService.addUserWishListProduct(userFavoriteProductRequest)
         return ResponseEntity.ok(true)
     }
@@ -93,7 +94,7 @@ class UserController(
     }
 
     @PostMapping("/add-to-cart")
-    fun addProductToCart(@RequestBody addUserCartRequest: AddUserCartRequest): ResponseEntity<Boolean> {
+    fun addProductToCart(@Valid @RequestBody addUserCartRequest: AddUserCartRequest): ResponseEntity<Boolean> {
         userCartService.addUserCart(addUserCartRequest)
         return ResponseEntity.ok(true)
     }
