@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface AttributeRepository: JpaRepository<AttributeMaster, Long> {
 
-    @Query("select am from attribute_master am where am.category.id= = :categoryId")
+    @Query("select am from AttributeMaster am where am.category.id= :categoryId")
     fun getAllAttributeByCategoryId(@Param("categoryId") categoryId: Long): List<AttributeMaster>
 }

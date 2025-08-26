@@ -26,7 +26,7 @@ class SecurityConfiguration(
             .authorizeHttpRequests {
                 it.requestMatchers("/api/health-check", "/api/auth/**" ,"/api/auth/refresh", "/error")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/product/**", "/api/category/**")
+                    .requestMatchers(HttpMethod.POST, "/api/product/**", "/api/category/**","/api/attribute/**")
                     .hasRole("ADMIN")
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .anyRequest()
