@@ -33,6 +33,9 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
             }
             logger.error("Data integrity violation creating category '{}': {}", category.title, ex.message)
             throw DataAccessProblem("Could not create category", ex)
+        }catch (ex: Exception) {
+            logger.error("Unexpected error creating category: {}", ex.message)
+            throw DataAccessProblem("Could not create category", ex)
         }
     }
 

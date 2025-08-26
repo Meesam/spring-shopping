@@ -2,9 +2,11 @@ package com.meesam.springshopping.service.auth
 
 import com.meesam.springshopping.dto.AuthenticationRequest
 import com.meesam.springshopping.dto.AuthenticationResponse
+import com.meesam.springshopping.exception_handler.DataAccessProblem
 import com.meesam.springshopping.security.JwtProperties
 import com.meesam.springshopping.service.user.CustomUserDetailsService
 import com.meesam.springshopping.service.user.TokenService
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
@@ -19,6 +21,9 @@ class AuthenticationService(
     private val tokenService: TokenService,
     private val jwtProperties: JwtProperties
 ) {
+    companion object {
+        private val logger = LoggerFactory.getLogger(AuthenticationService::class.java)
+    }
 
     fun authentication(authRequest: AuthenticationRequest): AuthenticationResponse {
         try {
@@ -37,8 +42,8 @@ class AuthenticationService(
                 token = accessToken
             )
         } catch (e: AuthenticationException) {
-            throw e
+            logger.error("Authentication error: {}", e.message)
+            throw DataAccessProblem("Invalid username or password", e)
         }
     }
-
 }

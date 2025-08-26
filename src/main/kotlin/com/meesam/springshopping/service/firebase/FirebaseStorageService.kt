@@ -1,7 +1,6 @@
 package com.meesam.springshopping.service.firebase
 
-import com.google.cloud.storage.BlobId
-import com.google.cloud.storage.BlobInfo
+
 import com.google.firebase.cloud.StorageClient
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -19,7 +18,7 @@ class FirebaseStorageService {
 
         val blob = bucket.create(fileName, file.bytes, file.contentType)
 
-        val downloadUrl: URL = URL("https://firebasestorage.googleapis.com/v0/b/" +
+        val downloadUrl = URL("https://firebasestorage.googleapis.com/v0/b/" +
                 "${bucket.name}/o/${blob.name}?alt=media")
 
         return downloadUrl.toString()

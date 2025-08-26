@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import org.checkerframework.checker.units.qual.min
 
 
 data class UserAddressRequest(
@@ -42,7 +41,6 @@ data class UserAddressRequest(
     val nearBy:String? = null,
 
     @field:NotNull(message = "userId cannot be null")
-    @field:NotBlank(message = "userId cannot be blank")
     @field:Min(value = 1, message = "userId must be greater than zero")
     val userId: Long = 0
 )

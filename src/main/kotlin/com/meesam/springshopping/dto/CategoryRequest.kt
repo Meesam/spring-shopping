@@ -2,7 +2,6 @@ package com.meesam.springshopping.dto
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import java.time.LocalDateTime
 
 data class CategoryRequest(
 

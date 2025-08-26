@@ -14,17 +14,15 @@ data class ProductRequest(
 
     @field:NotNull(message = "Price cannot be null")
     @field:Positive(message = "Price must be greater than 0")
-
     val price: Double = 0.0,
+
     val description: String = "",
 
-    @field:NotBlank(message = "category cannot be blank")
     @field:NotNull(message = "category cannot be null")
     @field:Min(value = 1, message = "category must be at least 1")
-    @field:Positive(message = "quantity must be greater than zero")
+    @field:Positive(message = "category must be greater than zero")
     val category: Long = 0,
 
-    @field:NotBlank(message = "quantity cannot be blank")
     @field:NotNull(message = "quantity cannot be null")
     @field:Positive(message = "quantity must be greater than zero")
     @field:Min(value = 1, message = "Quantity must be at least 1")

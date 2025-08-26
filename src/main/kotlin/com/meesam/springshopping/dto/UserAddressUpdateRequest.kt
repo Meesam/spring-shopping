@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size
 data class UserAddressUpdateRequest(
 
     @field:NotNull(message = "id cannot be null")
-    @field:NotBlank(message = "id cannot be blank")
     @field:Min(value = 1, message = "id must be greater than zero")
     val id: Long = 0,
 
@@ -45,7 +44,6 @@ data class UserAddressUpdateRequest(
     val nearBy:String? = null,
 
     @field:NotNull(message = "userId cannot be null")
-    @field:NotBlank(message = "userId cannot be blank")
     @field:Min(value = 1, message = "userId must be greater than zero")
     val userId: Long = 0
 )
