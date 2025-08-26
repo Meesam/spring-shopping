@@ -1,35 +1,34 @@
 package com.meesam.springshopping.model
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
 
 @Entity
-@Table(name = "category")
-data class Category(
+@Table(name = "attribute_master")
+data class AttributeMaster(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(nullable = false, unique = true, name = "title")
+    @Column(nullable = false, name = "title")
     var title: String,
+
+    @Column(nullable = true, name = "description")
+    var description: String? = null,
 
     @Column(nullable = false, name = "createdAt")
     val createdAt: LocalDateTime? = null,
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", cascade = [CascadeType.ALL])
-    val product: MutableSet<Product> = mutableSetOf(),
+    @ManyToOne(fetch = FetchType.LAZY)
+    val category: Category,
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", cascade = [CascadeType.ALL])
-    val attributes: MutableSet<AttributeMaster> = mutableSetOf(),
 )
+
