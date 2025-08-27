@@ -23,9 +23,11 @@ data class ProductAttributes(
     @Column(nullable = false, name = "attribute_id")
     val attributeId :Long,
 
-    @Convert(converter = StringListConverter::class)
     @Column(nullable = false, name = "values")
-    val values :List<String>,
+    val values : String,
+
+    @Column(nullable = false, name = "price")
+    val price : Double,
 
     @Column(nullable = false, name = "createdAt")
     val createdAt: LocalDateTime? = null,

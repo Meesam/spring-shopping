@@ -38,7 +38,8 @@ class ProductAttributeService(
                         productId = productId,
                         createdAt = LocalDateTime.now(),
                         attributeId = attributeId,
-                        values = values
+                        values = values,
+                        price = price,
                     )
                 )
             }
