@@ -24,7 +24,7 @@ class SecurityConfiguration(
         httpSecurity
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/api/health-check", "/api/auth/**" ,"/api/auth/refresh", "/error")
+                it.requestMatchers("/api/health-check", "/api/auth/**" ,"/api/auth/refresh-token", "/error")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/product/**", "/api/category/**","/api/attribute/**")
                     .hasRole("ADMIN")

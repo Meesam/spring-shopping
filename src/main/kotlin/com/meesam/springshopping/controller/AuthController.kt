@@ -2,6 +2,8 @@ package com.meesam.springshopping.controller
 
 import com.meesam.springshopping.dto.AuthenticationRequest
 import com.meesam.springshopping.dto.AuthenticationResponse
+import com.meesam.springshopping.dto.RefreshTokenRequest
+import com.meesam.springshopping.dto.TokenResponse
 import com.meesam.springshopping.dto.UserRequest
 import com.meesam.springshopping.dto.UserResponse
 import com.meesam.springshopping.service.auth.AuthenticationService
@@ -27,5 +29,10 @@ class AuthController(private val userService: UserService, private val authentic
     @PostMapping("/login")
     fun login(@Valid @RequestBody authenticationRequest: AuthenticationRequest): AuthenticationResponse{
        return authenticationService.authentication(authenticationRequest)
+    }
+
+    @PostMapping("/refresh-token")
+    fun refreshToken(@Valid @RequestBody refreshTokenRequest: RefreshTokenRequest): TokenResponse{
+        return authenticationService.generateAccessToken(refreshTokenRequest)
     }
 }
