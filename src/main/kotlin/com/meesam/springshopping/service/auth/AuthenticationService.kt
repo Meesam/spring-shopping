@@ -4,7 +4,9 @@ import com.meesam.springshopping.dto.AuthenticationRequest
 import com.meesam.springshopping.dto.AuthenticationResponse
 import com.meesam.springshopping.dto.RefreshTokenRequest
 import com.meesam.springshopping.dto.TokenResponse
+import com.meesam.springshopping.dto.UserResponse
 import com.meesam.springshopping.exception_handler.DataAccessProblem
+import com.meesam.springshopping.repository.user.UserRepository
 import com.meesam.springshopping.security.JwtProperties
 import com.meesam.springshopping.service.user.CustomUserDetailsService
 import com.meesam.springshopping.service.user.TokenService
@@ -18,6 +20,8 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 
 
@@ -26,7 +30,8 @@ class AuthenticationService(
     private val authenticationManager: AuthenticationManager,
     private val userDetailsService: CustomUserDetailsService,
     private val tokenService: TokenService,
-    private val jwtProperties: JwtProperties
+    private val jwtProperties: JwtProperties,
+    private val userRepository: UserRepository
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(AuthenticationService::class.java)
@@ -41,6 +46,18 @@ class AuthenticationService(
                 )
             )
             val user = userDetailsService.loadUserByUsername(authRequest.email)
+            val userDetails = userRepository.findByEmail(authRequest.email)
+            val userCompleteDetails = with(userDetails) {
+                UserResponse(
+                    id = this?.id ?: 0,
+                    name = this?.name ?: "",
+                    email = this?.email ?: "",
+                    dob = this?.dob ?: LocalDate.now(),
+                    lastLoginAt = this?.lastLoginAt ?: LocalDateTime.now(),
+                    role = this?.role ?: "",
+                    profilePicUrl = this?.profilePicUrl ?: ""
+                )
+            }
             val accessToken = tokenService.generate(
                 userDetails = user,
                 expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
@@ -51,7 +68,8 @@ class AuthenticationService(
             )
             return AuthenticationResponse(
                 token = accessToken,
-                refreshToken = refreshToken
+                refreshToken = refreshToken,
+                user = userCompleteDetails
             )
         } catch (e: AuthenticationException) {
             logger.error("Authentication error: {}", e.message)
@@ -59,17 +77,33 @@ class AuthenticationService(
         }
     }
 
-    fun generateAccessToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse {
+    fun generateAccessToken(refreshTokenRequest: RefreshTokenRequest): AuthenticationResponse? {
         try {
             tokenService.extractEmail(refreshTokenRequest.token)?.let { email ->
                 if (!tokenService.isExpired(refreshTokenRequest.token)) {
                     val foundUser = userDetailsService.loadUserByUsername(email)
+                    val userDetails = userRepository.findByEmail(email)
+                    val userCompleteDetails = with(userDetails) {
+                        UserResponse(
+                            id = this?.id ?: 0,
+                            name = this?.name ?: "",
+                            email = this?.email ?: "",
+                            dob = this?.dob ?: LocalDate.now(),
+                            lastLoginAt = this?.lastLoginAt ?: LocalDateTime.now(),
+                            role = this?.role ?: "",
+                            profilePicUrl = this?.profilePicUrl ?: ""
+                        )
+                    }
                     if (tokenService.isValid(refreshTokenRequest.token, foundUser)) {
                         val accessToken = tokenService.generate(
                             userDetails = foundUser,
                             expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
                         )
-                        return TokenResponse(accessToken)
+                        return AuthenticationResponse(
+                            token = accessToken,
+                            refreshToken = refreshTokenRequest.token,
+                            user = userCompleteDetails
+                        )
                     }
                 }
             }
@@ -78,6 +112,6 @@ class AuthenticationService(
         } catch (e: ExpiredJwtException) {
             throw DataAccessProblem("refresh token is expired", e)
         }
-        return TokenResponse(null)
+        return null
     }
 }

@@ -151,4 +151,23 @@ class UserService(
             }
         }
     }
+
+    @Transactional
+    fun getUserProfile(userId: Long):UserResponse {
+        val user = userRepository.findByIdOrNull(userId)
+            ?: throw NotFoundException("User not found")
+        user.apply {
+            return UserResponse(
+                id = id,
+                name = name,
+                role = role,
+                email = email,
+                dob = dob,
+                lastLoginAt = lastLoginAt,
+                profilePicUrl = profilePicUrl
+            )
+        }
+    }
+
+
 }

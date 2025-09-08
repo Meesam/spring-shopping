@@ -9,5 +9,6 @@ data class UserResponse(
     val email: String = "",
     val dob: LocalDate? = null,
     val lastLoginAt: LocalDateTime? = null,
-    val role: String
+    val role: String,
+    val profilePicUrl: String? = null
 )

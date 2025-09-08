@@ -32,7 +32,7 @@ class AuthController(private val userService: UserService, private val authentic
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@Valid @RequestBody refreshTokenRequest: RefreshTokenRequest): TokenResponse{
+    fun refreshToken(@Valid @RequestBody refreshTokenRequest: RefreshTokenRequest): AuthenticationResponse?{
         return authenticationService.generateAccessToken(refreshTokenRequest)
     }
 }

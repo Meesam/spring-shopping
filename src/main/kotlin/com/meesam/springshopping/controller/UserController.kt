@@ -6,6 +6,7 @@ import com.meesam.springshopping.dto.UserAddressResponse
 import com.meesam.springshopping.dto.UserAddressUpdateRequest
 import com.meesam.springshopping.dto.UserFavoriteProductRequest
 import com.meesam.springshopping.dto.UserProfilePictureRequest
+import com.meesam.springshopping.dto.UserResponse
 import com.meesam.springshopping.dto.UserUpdateRequest
 import com.meesam.springshopping.service.user.UserAddressService
 import com.meesam.springshopping.service.user.UserCartService
@@ -35,12 +36,17 @@ class UserController(
         private val logger = LoggerFactory.getLogger(UserController::class.java)
     }
 
-
     @PostMapping("/update-user")
     fun updateUser(@Valid @RequestBody userUpdateRequest: UserUpdateRequest): ResponseEntity<Boolean> {
         logger.info("Received a request to the /api/user/update-user endpoint.")
         userService.updateUser(userUpdateRequest)
         return ResponseEntity.ok(true)
+    }
+
+    @GetMapping("/getUser")
+    fun getUserByid(@RequestParam("id") id: Long): ResponseEntity<UserResponse> {
+        logger.info("Received a request to the /api/getUser endpoint.")
+        return ResponseEntity.ok(userService.getUserProfile(id))
     }
 
     @PostMapping("/add-address")
