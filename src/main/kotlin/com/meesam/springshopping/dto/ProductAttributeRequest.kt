@@ -17,6 +17,5 @@ data class ProductAttributeRequest(
     @field:Size(min = 3, max = 100, message = "values should be between 3 and 100 characters")
     val values: String,
 
-    @field:Min(value = 1, message = "price must be greater than zero")
-    val price: Double = 0.0
+    val price: Double? = null
 )

@@ -29,9 +29,9 @@ class UserCartService(
 
     @Transactional
     fun addUserCart(userCartRequest: AddUserCartRequest){
-        val user = userRepository.findByIdOrNull(userCartRequest.userId)
+        val user = userRepository.findByIdOrNull(userCartRequest.userId as Long)
             ?: throw IllegalArgumentException("User not found")
-         productRepository.findByIdOrNull(userCartRequest.productId)
+         productRepository.findByIdOrNull(userCartRequest.productId as Long)
             ?: throw IllegalArgumentException("Product not found")
 
         try {

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import org.hibernate.Hibernate
 import java.time.LocalDateTime
 
 
@@ -12,17 +13,31 @@ import java.time.LocalDateTime
 data class CartProducts(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long? = null,
 
     @Column(nullable = false,name = "cart_id")
-    val cartId : Long,
+    var cartId : Long? = null,
 
     @Column(nullable = false,name = "product_id")
-    val productId : Long,
+    var productId : Long? = null,
 
     @Column(nullable = false,name = "quantity")
-    val quantity : Long,
+    var quantity : Long,
 
     @Column(nullable = false, name = "createdAt")
-    val createdAt: LocalDateTime? = null,
-)
+    var createdAt: LocalDateTime? = null,
+){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as CartProducts
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+
+    override fun toString(): String {
+        return "CartProducts(id=$id)"
+    }
+}

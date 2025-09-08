@@ -8,7 +8,7 @@ data class AddUserCartRequest(
     val title:String? = null,
 
     @field:Positive(message = "userId must be greater than zero")
-    val userId:Long = 0,
+    val userId:Long? = null,
 
     @field:NotNull(message = "quantity cannot be null")
     @field:Positive(message = "quantity must be greater than zero")
@@ -16,5 +16,5 @@ data class AddUserCartRequest(
     val quantity:Long = 0,
 
     @field:Positive(message = "productId must be greater than zero")
-    val productId:Long = 0
+    val productId:Long? = null
 )

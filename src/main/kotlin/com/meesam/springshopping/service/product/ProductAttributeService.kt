@@ -25,21 +25,21 @@ class ProductAttributeService(
 
     @Transactional
     fun addProductAttribute(productAttributeRequest: ProductAttributeRequest) {
-        productRepository.findByIdOrNull(productAttributeRequest.productId)
+       val product = productRepository.findByIdOrNull(productAttributeRequest.productId)
             ?: throw NotFoundException("Product not found")
 
-        attributeRepository.findByIdOrNull(productAttributeRequest.attributeId)
+       val attributesMaster = attributeRepository.findByIdOrNull(productAttributeRequest.attributeId)
             ?: throw NotFoundException("Attribute not found")
 
         try {
             with(productAttributeRequest) {
                 productAttributeRepository.save(
                     ProductAttributes(
-                        productId = productId,
                         createdAt = LocalDateTime.now(),
-                        attributeId = attributeId,
                         values = values,
                         price = price,
+                        products = product,
+                        attributes = attributesMaster
                     )
                 )
             }

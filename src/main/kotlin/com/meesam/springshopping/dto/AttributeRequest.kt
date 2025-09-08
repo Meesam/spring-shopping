@@ -16,6 +16,6 @@ data class AttributeRequest(
 
     @field:Min(value = 1, message = "categoryId must be greater than zero")
     @field:Positive(message = "categoryId must be greater than zero")
-    var categoryId: Long
+    var categoryId: Long? = null
 
 )

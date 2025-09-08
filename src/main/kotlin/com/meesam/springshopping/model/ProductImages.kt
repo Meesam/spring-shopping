@@ -1,5 +1,6 @@
 package com.meesam.springshopping.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -10,22 +11,42 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import java.time.LocalDateTime
 
 
 @Entity
 @Table(name = "product_images")
-data class ProductImages(
+ data class ProductImages(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long? = null,
 
     @Column(nullable = true, name = "image_path")
-    val imagePath :String,
+    var imagePath :String,
+
+    @Column(nullable = true, name = "isDefaultImage")
+    var isDefaultImage :Boolean? = false,
 
     @Column(nullable = false, name = "createdAt")
-    val createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = null,
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    val products: Product
-)
+    var products: Product
+){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as ProductImages
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+
+    override fun toString(): String {
+        return "ProductImages(id=$id, imagePath='$imagePath')"
+    }
+
+}

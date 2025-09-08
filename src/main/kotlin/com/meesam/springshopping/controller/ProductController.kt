@@ -30,12 +30,16 @@ class ProductController(private val productService: ProductService) {
         return ResponseEntity.ok(productService.getAllProduct())
     }
 
+    @GetMapping("/get-product-by-id")
+    fun getProductById(@RequestParam("id") id: Long): ResponseEntity<ProductResponse> {
+        return ResponseEntity.ok(productService.getProductById(id))
+    }
+
     @PostMapping("/addImage")
     fun addProductImages(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("productId") productId: Long
     ): ResponseEntity<Boolean> {
-
         val productImageRequest = ProductImageRequest(file, productId)
         productService.addProductImage(productImageRequest)
         return ResponseEntity.ok(true)

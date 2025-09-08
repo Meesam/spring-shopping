@@ -1,11 +1,15 @@
 package com.meesam.springshopping.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import java.time.LocalDateTime
 
 
@@ -14,20 +18,37 @@ import java.time.LocalDateTime
 data class ProductAttributes(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
-
-    @Column(nullable = false, name = "product_id")
-    val productId :Long,
-
-    @Column(nullable = false, name = "attribute_id")
-    val attributeId :Long,
+    var id: Long? = null,
 
     @Column(nullable = false, name = "values")
-    val values : String,
+    var values : String,
 
-    @Column(nullable = false, name = "price")
-    val price : Double,
+    @Column(nullable = true, name = "price")
+    var price : Double? = null,
 
     @Column(nullable = false, name = "createdAt")
-    val createdAt: LocalDateTime? = null,
-)
+    var createdAt: LocalDateTime? = null,
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    var products: Product,
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    var attributes: AttributeMaster
+
+){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as ProductAttributes
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+
+    override fun toString(): String {
+        return "ProductAttributes(id=$id)"
+    }
+}

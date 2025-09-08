@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -22,40 +23,54 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "users")
-data class User(
+ data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long? = null,
 
     @Column(nullable = false, name = "name")
-    val name :String,
+    var name :String,
 
     @Column(nullable = false, unique = true, name = "email")
-    val email: String,
+    var email: String,
 
     @JsonIgnore
     @Column(nullable = false, name = "password")
-    val password: String,
+    var password: String,
 
     @Column(nullable = false, name = "date_of_birth")
-    val dob: LocalDate,
+    var dob: LocalDate,
 
     @Column(nullable = true, name = "last_login_at")
-    val lastLoginAt: LocalDateTime? = null,
+    var lastLoginAt: LocalDateTime? = null,
 
     @Column(nullable = false, name = "role")
-    val role: String,
+    var role: String,
 
     @Column(nullable = true, name = "profile_pic_url")
-    val profilePicUrl: String? = null,
+    var profilePicUrl: String? = null,
 
     @Column(nullable = false, name = "createdAt")
-    val createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = null,
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "users", cascade = [CascadeType.ALL])
-    val address: MutableSet<UserAddress> = mutableSetOf(),
+    var address: MutableSet<UserAddress> = mutableSetOf(),
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "users", cascade = [CascadeType.ALL])
-    val cart: MutableSet<UserCart> = mutableSetOf(),
+    var cart: MutableSet<UserCart> = mutableSetOf(),
 
-)
+){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as User
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+
+    override fun toString(): String {
+        return "User(id=$id, name='$name', email='$email', password', dob=$dob, lastLoginAt=$lastLoginAt, role='$role', profilePicUrl=$profilePicUrl, createdAt=$createdAt, address=$address, cart=$cart')"
+    }
+ }

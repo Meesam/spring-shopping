@@ -140,6 +140,7 @@ class UserService(
         val result = firebaseService.uploadFile(userProfilePictureRequest.profilePicUrl)
         if (result.isNotEmpty()) {
             try {
+
                 userRepository.save(
                     user.copy(
                         profilePicUrl = result

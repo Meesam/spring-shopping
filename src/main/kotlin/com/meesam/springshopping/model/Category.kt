@@ -11,25 +11,41 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import java.time.LocalDateTime
 
 
 @Entity
 @Table(name = "category")
-data class Category(
+ data class Category(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long? = null,
 
     @Column(nullable = false, unique = true, name = "title")
     var title: String,
 
     @Column(nullable = false, name = "createdAt")
-    val createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = null,
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", cascade = [CascadeType.ALL])
-    val product: MutableSet<Product> = mutableSetOf(),
+    var product: MutableSet<Product> = mutableSetOf(),
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", cascade = [CascadeType.ALL])
-    val attributes: MutableSet<AttributeMaster> = mutableSetOf(),
-)
+    var attributes: MutableSet<AttributeMaster> = mutableSetOf(),
+){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Category
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+
+    override fun toString(): String {
+        return "Category(id=$id, title='$title')"
+    }
+
+}

@@ -22,7 +22,7 @@ class AttributeService(
     }
 
     fun addNewAttribute(attributeRequest: AttributeRequest) {
-        val category = categoryRepository.findByIdOrNull(attributeRequest.categoryId)
+        val category = categoryRepository.findByIdOrNull(attributeRequest.categoryId as Long)
             ?: throw NoSuchElementException("Category not found")
         try {
             with(attributeRequest) {

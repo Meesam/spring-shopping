@@ -50,9 +50,9 @@ class ProductService(
         } ?: throw IllegalArgumentException("category not found")
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.SUPPORTS)
     fun getAllProduct(): List<ProductResponse> {
-        val products = productRepository.findAll().map { product ->
+        val products = productRepository.findAllWithImages().map { product ->
             ProductResponse(
                 id = product.id,
                 title = product.title,
@@ -86,7 +86,26 @@ class ProductService(
                 logger.error("Could not add product image: {}", e.message)
                 throw DataAccessProblem("Could not add product image", e)
             }
-
         }
+    }
+
+    @Transactional(Transactional.TxType.SUPPORTS)
+    fun getProductById(id: Long): ProductResponse? {
+        val result = productRepository.findProductById(id)
+        val product =  result?.let {value->
+            return ProductResponse(
+                id = value.id,
+                title = value.title,
+                description = value.description,
+                price = value.price,
+                quantity = value.quantity,
+                categoryId = value.category.id,
+                categoryName = value.category.title,
+                createdAt = value.createdAt,
+                productImages =  value.productImages.toList(),
+                productAttributes = value.productAttributes.toList()
+            )
+        }
+        return product
     }
 }

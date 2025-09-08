@@ -1,5 +1,6 @@
 package com.meesam.springshopping.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -11,39 +12,55 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "user_address")
-data class UserAddress(
+  data class UserAddress(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long? = null,
 
     @Column(nullable = false, name = "address_name")
-    val addressName :String,
+    var addressName :String,
 
     @Column(nullable = false, name = "street")
-    val street :String,
+    var street :String,
 
     @Column(nullable = false, name = "state")
-    val state :String,
+    var state :String,
 
     @Column(nullable = false, name = "city")
-    val city :String,
+    var city :String,
 
     @Column(nullable = true, name = "country")
-    val country :String? = null,
+    var country :String? = null,
 
     @Column(nullable = true, name = "pin")
-    val pin :String,
+    var pin :String,
 
     @Column(nullable = true, name = "nearby")
-    val nearby :String? = null,
+    var nearby :String? = null,
 
     @Column(nullable = false, name = "createdAt")
-    val createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = null,
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    val users: User
-)
+    var users: User
+){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as UserAddress
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+
+    override fun toString(): String {
+        return "UserAddress(id=$id, addressName='$addressName', street='$street', state='$state', city='$city', country=$country, pin='$pin', nearby=$nearby, createdAt=$createdAt, users=$users')"
+    }
+ }
