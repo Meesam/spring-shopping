@@ -1,5 +1,6 @@
 package com.meesam.springshopping.dto
 
+import com.meesam.springshopping.model.ProductImages
 import java.time.LocalDateTime
 
 data class ProductResponse(
@@ -10,5 +11,6 @@ data class ProductResponse(
     val categoryId: Long = 0,
     val categoryName: String = "",
     val quantity: Int = 0,
-    val createdAt: LocalDateTime? = null
+    val createdAt: LocalDateTime? = null,
+    val productImages: List<ProductImages> = emptyList()
 )

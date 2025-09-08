@@ -61,7 +61,8 @@ class ProductService(
                 quantity = product.quantity,
                 categoryId = product.category.id,
                 categoryName = product.category.title,
-                createdAt = product.createdAt
+                createdAt = product.createdAt,
+                productImages =  product.productImages.toList()
             )
         }
         return products
