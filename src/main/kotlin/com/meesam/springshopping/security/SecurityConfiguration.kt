@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +25,7 @@ class SecurityConfiguration(
         jwtAuthenticationFilter: JwtAuthenticationFilter
     ): DefaultSecurityFilterChain =
         httpSecurity
+            .cors { corsConfigurationSource() }
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/health-check", "/api/auth/**" ,"/api/auth/refresh-token", "/error")
@@ -39,5 +43,25 @@ class SecurityConfiguration(
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val config = CorsConfiguration().apply {
+            // Use allowedOriginPatterns if you need wildcards with credentials
+            // e.g., addAllowedOriginPattern("https://*.example.com")
+            addAllowedOrigin("http://localhost:5173")
+            addAllowedOrigin("http://127.0.0.1:3000")
+            addAllowedHeader(CorsConfiguration.ALL)
+            addAllowedMethod(CorsConfiguration.ALL)
+            allowCredentials = true
+            // Optional: expose headers your frontend needs to read
+            addExposedHeader("Authorization")
+            addExposedHeader("Content-Disposition")
+        }
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", config)
+        return source
+    }
+
 
 }
