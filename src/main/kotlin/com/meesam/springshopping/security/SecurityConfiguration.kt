@@ -35,7 +35,6 @@ class SecurityConfiguration(
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .anyRequest()
                     .fullyAuthenticated()
-
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

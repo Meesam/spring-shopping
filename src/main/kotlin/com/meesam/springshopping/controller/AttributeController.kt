@@ -1,12 +1,16 @@
 package com.meesam.springshopping.controller
 
+
 import com.meesam.springshopping.dto.AttributeRequest
 import com.meesam.springshopping.dto.AttributeResponse
+import com.meesam.springshopping.dto.CategoryResponse
 import com.meesam.springshopping.dto.ProductAttributeRequest
 import com.meesam.springshopping.service.category.CategoryService
 import com.meesam.springshopping.service.product.AttributeService
 import com.meesam.springshopping.service.product.ProductAttributeService
 import jakarta.validation.Valid
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -20,6 +24,10 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/attribute")
 class AttributeController(private val attributeService: AttributeService, private val productAttributeService: ProductAttributeService) {
+
+    companion object{
+        private val logger = LoggerFactory.getLogger(AttributeController::class.java)
+    }
 
     @PostMapping("/create")
     fun addNewAttribute(@Valid @RequestBody attributeRequest: AttributeRequest): ResponseEntity<Boolean> {
@@ -37,5 +45,12 @@ class AttributeController(private val attributeService: AttributeService, privat
     fun addProductAttribute(@Valid @RequestBody attributeRequest: ProductAttributeRequest): ResponseEntity<Boolean> {
         productAttributeService.addProductAttribute(attributeRequest)
         return ResponseEntity.ok(true)
+    }
+
+    @GetMapping("/all")
+    fun getAllCategories(): ResponseEntity<List<AttributeResponse>>{
+        logger.info("Received a request to the /api/attribute/all endpoint.")
+        val result = attributeService.getAllAttributes()
+        return ResponseEntity(result, HttpStatus.OK)
     }
 }

@@ -57,4 +57,21 @@ class AttributeService(
             )
         }
     }
+
+    fun getAllAttributes(): List<AttributeResponse> {
+        val attributes = attributeRepository.findAll()
+        if (attributes.isEmpty()) {
+            return emptyList()
+        }
+        return attributes.map {
+            AttributeResponse(
+                id = it.id,
+                title = it.title,
+                description = it.description,
+                categoryId = it.category.id,
+                categoryName = it.category.title,
+                createdAt = it.createdAt ?: LocalDateTime.now()
+            )
+        }
+    }
 }
