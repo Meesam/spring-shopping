@@ -4,6 +4,7 @@ import com.meesam.springshopping.model.Product
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -12,8 +13,9 @@ interface ProductRepository : JpaRepository<Product, Long> {
     @Query("select p from Product p")
     fun findAllWithImages(): List<Product>
 
-    @EntityGraph(attributePaths = ["productImages", "category","productAttributes"])
+    @EntityGraph(attributePaths = ["productImages", "category","productAttributes","productAttributes.attributes"])
     @Query("select p from Product p where p.id = :id")
-    fun findProductById(id: Long): Product?
+    fun findProductById(@Param("id") id: Long): Product?
+
 
 }

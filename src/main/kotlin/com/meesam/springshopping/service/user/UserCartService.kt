@@ -1,6 +1,7 @@
 package com.meesam.springshopping.service.user
 
 import com.meesam.springshopping.dto.AddUserCartRequest
+import com.meesam.springshopping.exception_handler.AccessDeniedProblem
 import com.meesam.springshopping.exception_handler.DataAccessProblem
 import com.meesam.springshopping.model.CartProducts
 import com.meesam.springshopping.model.UserCart
@@ -11,6 +12,8 @@ import com.meesam.springshopping.repository.user.UserRepository
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -33,6 +36,18 @@ class UserCartService(
             ?: throw IllegalArgumentException("User not found")
          productRepository.findByIdOrNull(userCartRequest.productId as Long)
             ?: throw IllegalArgumentException("Product not found")
+
+        // Enforce ownership: authenticated principal must match the target user
+        try {
+            SecurityContextHolder.getContext().authentication?.name?.let {
+                if (it != user.email) {
+                    throw AccessDeniedException("Access Denied")
+                }
+            }
+        }catch (e: Exception){
+            logger.error("Could not check access rights: {}", e.message)
+            throw AccessDeniedProblem("Could not check access rights", e)
+        }
 
         try {
             val result = with(userCartRequest) {

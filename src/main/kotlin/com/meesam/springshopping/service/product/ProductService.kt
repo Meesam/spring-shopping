@@ -4,6 +4,7 @@ import com.meesam.springshopping.dto.ProductImageRequest
 import com.meesam.springshopping.dto.ProductRequest
 import com.meesam.springshopping.dto.ProductResponse
 import com.meesam.springshopping.exception_handler.DataAccessProblem
+import com.meesam.springshopping.exception_handler.NotFoundException
 import com.meesam.springshopping.model.Product
 import com.meesam.springshopping.model.ProductImages
 import com.meesam.springshopping.repository.category.CategoryRepository
@@ -92,8 +93,9 @@ class ProductService(
     @Transactional(Transactional.TxType.SUPPORTS)
     fun getProductById(id: Long): ProductResponse? {
         val result = productRepository.findProductById(id)
-        val product =  result?.let {value->
-            return ProductResponse(
+            ?: throw NotFoundException("Product with ID $id not found")
+        return result.let { value->
+            ProductResponse(
                 id = value.id,
                 title = value.title,
                 description = value.description,
@@ -106,6 +108,5 @@ class ProductService(
                 productAttributes = value.productAttributes.toList()
             )
         }
-        return product
     }
 }

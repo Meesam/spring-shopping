@@ -64,6 +64,18 @@ class GlobalExceptionHandler {
         }
         return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(AccessDeniedProblem::class)
+    fun handleAccessDenied(ex: AccessDeniedProblem): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse(
+            status = HttpStatus.FORBIDDEN.value(),
+            // Use a generic message to avoid leaking authorization details
+            message = "You do not have permission to access this resource.",
+            timestamp = System.currentTimeMillis()
+        )
+        return ResponseEntity(errorResponse, HttpStatus.FORBIDDEN)
+    }
+
 }
 
 data class ErrorResponse(
@@ -76,3 +88,4 @@ class NotFoundException(message: String) : RuntimeException(message)
 
 class DuplicateResourceException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 class DataAccessProblem(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+class AccessDeniedProblem(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
